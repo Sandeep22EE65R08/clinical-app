@@ -1,0 +1,14 @@
+# Secrets / environment — never commit the real values.
+.env
+*.env
+!.env.example
+
+# Caddy runtime data (certificates, etc.) if ever generated locally.
+caddy_data/
+caddy_config/
+
+# Build output
+backend/**/bin/
+backend/**/obj/
+frontend/dist/
+frontend/node_modules/

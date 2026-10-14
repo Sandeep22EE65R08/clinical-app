@@ -1,0 +1,16 @@
+# Caddy automatically obtains and renews a free HTTPS certificate for {$DOMAIN}.
+# It then forwards all traffic to the internal "web" (Nginx) container on port 80,
+# which in turn serves the React app and proxies /api to the backend.
+#
+# For a real domain, set DOMAIN in .env (e.g. clinic.example.com) and make sure
+# the domain's DNS A record points to this server's public IP, with ports 80 and
+# 443 open. For local testing, DOMAIN=localhost gives a self-signed certificate.
+
+{
+	email {$ACME_EMAIL:admin@example.com}
+}
+
+{$DOMAIN:localhost} {
+	encode gzip
+	reverse_proxy web:80
+}

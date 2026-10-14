@@ -1,0 +1,29 @@
+# Production overlay that adds a Caddy reverse proxy in front of the app to provide
+# automatic, free HTTPS (Let's Encrypt). Use it TOGETHER with the base compose file:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Caddy listens on 80/443 and proxies to the internal "web" container. On your cloud
+# server, open only ports 22 (SSH), 80 and 443 in the firewall/security group.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: clinic_caddy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
