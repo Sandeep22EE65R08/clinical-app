@@ -18,12 +18,30 @@ export default function Receipt() {
   if (!visit) return <p className="muted">Loading receipt…</p>;
   const receiptNo = `R-${visit.visitDate.replaceAll('-', '')}-${String(visit.tokenNumber).padStart(3, '0')}`;
 
+  // Share as text via the device share sheet (WhatsApp, SMS...); falls back to WhatsApp link.
+  const share = async () => {
+    const text = [
+      `${clinic?.name ?? 'Clinic'} - Receipt ${receiptNo}`,
+      `Patient: ${visit.patientName} (${visit.villageTownCity})`,
+      `Doctor: ${visit.doctorName}`,
+      `Date: ${formatDate(visit.visitDate)} ${formatTime(visit.visitTime)}`,
+      `Fee: ${rupee(visit.consultationFee)}  Paid: ${rupee(visit.amountPaid)}`,
+      `Status: ${paymentLabel(visit.paymentStatus)}`,
+    ].join('\n');
+    if (navigator.share) {
+      try { await navigator.share({ title: `Receipt ${receiptNo}`, text }); } catch { /* cancelled */ }
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+  };
+
   return (
     <div>
       <div className="toolbar no-print">
         <button className="btn" onClick={() => navigate('/today')}>← Back</button>
         <button className="btn btn-primary" onClick={() => window.print()}>🖨 Print</button>
         <button className="btn" onClick={() => window.print()}>⬇ Download PDF</button>
+        <button className="btn" onClick={share}>📤 Share</button>
       </div>
 
       <div className="card" style={{ maxWidth: 420, margin: '0 auto' }} id="receipt">

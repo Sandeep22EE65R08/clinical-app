@@ -2,12 +2,31 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Patient, UserDto } from '../types';
 import {
-  createVisit, findExisting, getClinic, getDoctors, quickRegister,
+  createVisit, findExisting, getClinic, getDoctors, quickRegister, searchPatients,
 } from '../api/endpoints';
+import { parseVoiceEntry } from '../utils';
+
+// Minimal typing for the browser Web Speech API (not in lib.dom).
+interface SpeechRec {
+  lang: string; interimResults: boolean; maxAlternatives: number;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onerror: (() => void) | null; onend: (() => void) | null;
+  start: () => void; stop: () => void;
+}
+type SpeechRecCtor = new () => SpeechRec;
+const getSpeechCtor = (): SpeechRecCtor | undefined => {
+  const w = window as unknown as { SpeechRecognition?: SpeechRecCtor; webkitSpeechRecognition?: SpeechRecCtor };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition;
+};
 
 export default function AddPatient() {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState<UserDto[]>([]);
+  const [villages, setVillages] = useState<string[]>([]);
+  const [listening, setListening] = useState(false);
+  const [voiceLang, setVoiceLang] = useState('en-IN');
+  const [heard, setHeard] = useState('');
+  const voiceSupported = !!getSpeechCtor();
   const [existing, setExisting] = useState<Patient | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +40,37 @@ export default function AddPatient() {
   useEffect(() => {
     getDoctors().then(setDoctors).catch(() => {});
     getClinic().then((c) => set('consultationFee', String(c.defaultConsultationFee))).catch(() => {});
+    // Suggest villages/towns already used by this clinic's patients (autocomplete).
+    searchPatients().then((list) => {
+      const counts = new Map<string, number>();
+      list.forEach((p) => p.villageTownCity &&
+        counts.set(p.villageTownCity, (counts.get(p.villageTownCity) ?? 0) + 1));
+      setVillages([...counts.entries()].sort((a, b) => b[1] - a[1]).map(([v]) => v));
+    }).catch(() => {});
   }, []);
+
+  const startVoice = () => {
+    const Ctor = getSpeechCtor();
+    if (!Ctor) return;
+    const rec = new Ctor();
+    rec.lang = voiceLang; rec.interimResults = false; rec.maxAlternatives = 1;
+    rec.onresult = (e) => {
+      const text = e.results[0][0].transcript;
+      setHeard(text);
+      const v = parseVoiceEntry(text);
+      setExisting(null);
+      setF((p) => ({
+        ...p,
+        name: v.name ?? p.name, age: v.age ?? p.age, mobileNumber: v.mobileNumber ?? p.mobileNumber,
+        gender: v.gender ?? p.gender, villageTownCity: v.villageTownCity ?? p.villageTownCity,
+        consultationFee: v.consultationFee ?? p.consultationFee,
+      }));
+    };
+    rec.onerror = () => { setListening(false); setError('Could not hear clearly. Please try again or type.'); };
+    rec.onend = () => setListening(false);
+    setError(''); setListening(true);
+    rec.start();
+  };
 
   const checkExisting = async () => {
     if (!f.mobileNumber && !f.name) return;
@@ -74,6 +123,18 @@ export default function AddPatient() {
         </div>
       )}
       <form onSubmit={save} className="card" style={{ maxWidth: 640 }}>
+        {voiceSupported && (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+            <button type="button" className="btn" onClick={startVoice} disabled={listening}>
+              {listening ? '🎙 Listening…' : '🎤 Speak patient details'}
+            </button>
+            <select value={voiceLang} onChange={(e) => setVoiceLang(e.target.value)} style={{ width: 'auto' }}>
+              <option value="en-IN">English</option>
+              <option value="hi-IN">हिन्दी / Hinglish</option>
+            </select>
+            {heard && <span className="muted" style={{ fontSize: 13 }}>Heard: “{heard}” — please review below</span>}
+          </div>
+        )}
         <div className="row">
           <div className="field"><label>Patient Name *</label>
             <input className="input" value={f.name} required autoFocus
@@ -92,7 +153,11 @@ export default function AddPatient() {
         </div>
         <div className="field"><label>Village / Town / City *</label>
           <input className="input" value={f.villageTownCity} required placeholder="e.g. Rampur"
-            onChange={(e) => set('villageTownCity', e.target.value)} /></div>
+            list="village-suggestions" autoComplete="off"
+            onChange={(e) => set('villageTownCity', e.target.value)} />
+          <datalist id="village-suggestions">
+            {villages.map((v) => <option key={v} value={v} />)}
+          </datalist></div>
         <div className="row">
           <div className="field"><label>Doctor</label>
             <select value={f.doctorId} onChange={(e) => set('doctorId', e.target.value)}>
