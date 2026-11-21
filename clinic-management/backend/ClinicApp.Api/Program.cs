@@ -10,9 +10,34 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ---- Hosting (Railway/Heroku-style platforms) ----
+// Platforms inject the port to listen on via PORT.
+var hostPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(hostPort))
+    builder.WebHost.UseUrls($"http://+:{hostPort}");
+
 // ---- Database ----
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// DATABASE_URL (postgres://user:pass@host:port/db, as provided by Railway) wins over
+// the "Host=...;Port=..." ConnectionStrings:DefaultConnection used locally/in compose.
+static string ToNpgsql(string url)
+{
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':', 2);
+    var csb = new Npgsql.NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port > 0 ? uri.Port : 5432,
+        Database = uri.AbsolutePath.TrimStart('/'),
+        Username = Uri.UnescapeDataString(userInfo[0]),
+        Password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : null,
+    };
+    return csb.ConnectionString;
+}
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var connectionString = !string.IsNullOrWhiteSpace(databaseUrl)
+    ? (databaseUrl.StartsWith("postgres", StringComparison.OrdinalIgnoreCase) ? ToNpgsql(databaseUrl) : databaseUrl)
+    : builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 // ---- JWT ----
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
