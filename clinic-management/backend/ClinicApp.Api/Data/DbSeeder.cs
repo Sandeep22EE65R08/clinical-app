@@ -6,9 +6,13 @@ namespace ClinicApp.Api.Data;
 
 public static class DbSeeder
 {
-    public static async Task SeedAsync(ApplicationDbContext db)
+    // Always applies migrations. The demo clinic (with well-known demo passwords) is only
+    // created when seedDemoData is true (config key "SeedDemoData"); it is OFF by default
+    // so production starts empty and users create their own clinic via /register.
+    public static async Task SeedAsync(ApplicationDbContext db, bool seedDemoData = false)
     {
         await db.Database.MigrateAsync();
+        if (!seedDemoData) return;
         if (await db.Clinics.AnyAsync()) return;
 
         var clinic = new Clinic

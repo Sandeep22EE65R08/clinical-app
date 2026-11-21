@@ -5,8 +5,8 @@ import { useAuth } from '../auth/AuthContext';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('reception');
-  const [password, setPassword] = useState('reception123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -52,14 +52,6 @@ export default function Login() {
         <p className="muted" style={{ textAlign: 'center', marginTop: 4, fontSize: 14 }}>
           Are you a patient? <Link to="/portal/login">Patient login</Link>
         </p>
-        <div className="card" style={{ marginTop: 16, background: '#f8fafc' }}>
-          <div className="muted" style={{ fontSize: 13 }}>
-            <strong>Demo logins</strong><br />
-            admin / admin123<br />
-            sharma / doctor123 (doctor)<br />
-            reception / reception123
-          </div>
-        </div>
       </div>
     </div>
   );

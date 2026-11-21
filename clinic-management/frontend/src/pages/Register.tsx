@@ -10,7 +10,7 @@ export default function Register() {
     clinicName: '', address: '', phone: '',
     adminName: '', username: '', password: '',
   });
-  const [includeSampleData, setIncludeSampleData] = useState(true);
+  const [includeSampleData, setIncludeSampleData] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 

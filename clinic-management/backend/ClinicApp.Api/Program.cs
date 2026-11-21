@@ -114,7 +114,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await DbSeeder.SeedAsync(db);
+    await DbSeeder.SeedAsync(db, app.Configuration.GetValue<bool>("SeedDemoData"));
 }
 
 app.Run();
