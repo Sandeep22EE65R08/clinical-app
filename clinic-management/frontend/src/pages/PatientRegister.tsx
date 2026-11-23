@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { useAuth } from '../auth/AuthContext';
 import { getPublicClinics } from '../api/endpoints';
@@ -8,6 +8,10 @@ import type { PublicClinic } from '../types';
 export default function PatientRegister() {
   const { patientRegister } = useAuth();
   const navigate = useNavigate();
+  // Coming from "Find care": preselect the chosen clinic and remember the doctor for booking.
+  const [params] = useSearchParams();
+  const wantedClinic = params.get('clinic');
+  const wantedDoctor = params.get('doctor');
   const [clinics, setClinics] = useState<PublicClinic[]>([]);
   const [form, setForm] = useState({
     clinicId: '', name: '', mobileNumber: '', password: '',
@@ -20,7 +24,8 @@ export default function PatientRegister() {
     getPublicClinics()
       .then((list) => {
         setClinics(list);
-        if (list.length) setForm((f) => ({ ...f, clinicId: list[0].id }));
+        const chosen = list.find((c) => c.id === wantedClinic) ?? list[0];
+        if (chosen) setForm((f) => ({ ...f, clinicId: chosen.id }));
       })
       .catch(() => setError('Could not load clinics. Please try again later.'));
   }, []);
@@ -45,7 +50,7 @@ export default function PatientRegister() {
         gender: form.gender,
         villageTownCity: form.villageTownCity.trim(),
       });
-      navigate('/portal');
+      navigate(wantedClinic ? `/portal/book${wantedDoctor ? `?doctor=${wantedDoctor}` : ''}` : '/portal');
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 409)
         setError(err.response.data?.message ?? 'This mobile number is already registered.');

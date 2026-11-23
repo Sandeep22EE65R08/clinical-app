@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { portalBookAppointment, portalGetDoctors } from '../../api/endpoints';
 import type { PortalDoctor } from '../../types';
@@ -8,8 +8,9 @@ import { today } from '../../utils';
 export default function PortalBook() {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState<PortalDoctor[]>([]);
+  const [params] = useSearchParams();
   const [form, setForm] = useState({
-    doctorId: '', scheduledDate: today(), scheduledTime: '10:00', reason: '',
+    doctorId: params.get('doctor') ?? '', scheduledDate: today(), scheduledTime: '10:00', reason: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

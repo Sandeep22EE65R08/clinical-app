@@ -80,6 +80,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<IPortalService, PortalService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<IDiscoveryService, DiscoveryService>();
 
 // ---- SMS / WhatsApp (modular; logs by default, real provider pluggable) ----
 var smsSettings = builder.Configuration.GetSection("Sms").Get<SmsSettings>() ?? new SmsSettings();

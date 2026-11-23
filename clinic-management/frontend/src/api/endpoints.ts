@@ -1,9 +1,9 @@
 import { api } from './client';
 import type {
   Analytics, Appointment, AppointmentStatus, AuthResponse, Clinic, DailyReport,
-  Dashboard, DoctorStat, Expense, ExpenseSummary, NotificationsResponse, Patient, PatientHistory,
-  PortalDoctor, PortalProfile, PortalVisit, PublicClinic,
-  QueueState, UserDto, Visit,
+  Dashboard, DiscoverResult, DoctorStat, Expense, ExpenseSummary, NotificationsResponse, Patient,
+  PatientHistory, PortalDoctor, PortalProfile, PortalVisit, PublicClinic,
+  QueueState, Symptom, UserDto, Visit,
 } from '../types';
 
 export const login = (username: string, password: string) =>
@@ -96,6 +96,11 @@ export const createExpense = (body: Record<string, unknown>) =>
   api.post<Expense>('/expenses', body).then((r) => r.data);
 export const deleteExpense = (id: string) =>
   api.delete(`/expenses/${id}`).then((r) => r.data);
+
+// ---- Public "Find care" (no login) ----
+export const getSymptoms = () => api.get<Symptom[]>('/discover/symptoms').then((r) => r.data);
+export const discoverCare = (params: { symptoms?: string; text?: string; location?: string }) =>
+  api.get<DiscoverResult>('/discover/search', { params }).then((r) => r.data);
 
 // ---- Patient portal auth ----
 export const getPublicClinics = () =>

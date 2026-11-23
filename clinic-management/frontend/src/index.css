@@ -268,6 +268,72 @@ h1, h2, h3 { margin: 0 0 4px; }
   display: flex; gap: 4px; padding: 8px 20px; background: var(--surface);
   border-bottom: 1px solid var(--border); overflow-x: auto; position: sticky; top: 61px; z-index: 19;
 }
+
+/* ---- Split login screen ---- */
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(circle at 15% 10%, #e0e9ff 0, transparent 45%),
+              radial-gradient(circle at 90% 90%, #dbeafe 0, transparent 40%), #f4f7fe; }
+.login-split { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1.05fr 1fr;
+  background: #fff; border-radius: 22px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(30, 64, 175, 0.15); }
+.login-hero { position: relative; padding: 34px 34px 0; color: #0f2a5c; overflow: hidden;
+  background: linear-gradient(160deg, #eaf2ff 0%, #d6e6ff 60%, #c3dcff 100%);
+  display: flex; flex-direction: column; min-height: 560px; }
+.login-logo { display: flex; align-items: center; gap: 12px; }
+/* Doctor stands on the right, bottom-aligned (like the reference); the photo's left and
+   top edges fade into the panel so the text on the left never sits on top of her. */
+.login-photo { position: absolute; right: -30%; bottom: 0; width: 118%; height: auto; z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 50%), linear-gradient(to bottom, transparent 0, #000 28%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 50%), linear-gradient(to bottom, transparent 0, #000 28%);
+  mask-composite: intersect; }
+.login-hero-content { position: relative; z-index: 1; }
+.login-wave svg { vertical-align: middle; margin-right: 10px; }
+.login-remember { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #35538a;
+  margin: 2px 0 14px; cursor: pointer; }
+.login-remember input { width: 17px; height: 17px; accent-color: #2563eb; }
+.login-field .ico { color: #35538a; display: grid; place-items: center; }
+.login-eye { color: #35538a; display: grid; place-items: center; }
+.login-btn { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.login-logo b { font-size: 21px; display: block; line-height: 1.15; }
+.login-logo small { font-size: 13px; color: #35538a; }
+.login-hero h2 { font-size: 34px; margin: 30px 0 6px; }
+.login-hero p { margin: 0; color: #35538a; max-width: 300px; line-height: 1.45; }
+.login-points { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 12px; position: relative; z-index: 1; }
+.login-points li { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 14px; }
+.login-points span { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid;
+  place-items: center; font-size: 18px; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15); }
+.login-wave { margin-top: auto; margin-left: -34px; margin-right: -34px; padding: 22px 34px; position: relative; z-index: 2;
+  background: linear-gradient(90deg, #1d4ed8, #2563eb); color: #fff; font-style: italic; font-size: 14px;
+  border-top-left-radius: 60% 40px; }
+.login-form-side { padding: 46px 46px 36px; display: flex; flex-direction: column; justify-content: center; }
+.login-form-side h1 { margin: 0; text-align: center; font-size: 30px; color: #0f2a5c; }
+.login-form-side .sub { text-align: center; color: #5b6b8c; margin: 6px 0 26px; font-size: 17px; }
+.login-field { position: relative; margin-bottom: 14px; }
+.login-field .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 17px; opacity: 0.7; }
+.login-field input { width: 100%; padding: 14px 44px 14px 44px; border-radius: 10px; border: 1px solid #c9d6f2;
+  background: #e8efff; font-size: 16px; color: #0f2a5c; }
+.login-field input:focus { outline: 2px solid #93b4ff; background: #fff; }
+.login-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: 0;
+  cursor: pointer; font-size: 18px; padding: 6px; opacity: 0.7; }
+.login-btn { width: 100%; padding: 14px; border: 0; border-radius: 10px; background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+.login-btn:disabled { opacity: 0.7; cursor: default; }
+.login-links { text-align: center; margin-top: 22px; font-size: 14px; color: #35538a; line-height: 1.9; }
+.login-links a { font-weight: 600; }
+
+@media (max-width: 760px) {
+  .login-wrap { padding: 0; align-items: stretch; background: #fff; }
+  .login-split { grid-template-columns: 1fr; border-radius: 0; box-shadow: none; min-height: 100vh; }
+  .login-hero { min-height: 0; padding: 22px 22px 0; }
+  .login-hero h2 { font-size: 26px; margin-top: 16px; }
+  .login-points, .login-photo { display: none; }
+  .login-hero::after { display: none; }
+  .login-wave { margin-top: 18px; margin-left: -22px; margin-right: -22px; padding: 12px 22px; }
+  .login-form-side { padding: 26px 22px 30px; }
+}
+
 .portal-tab {
   display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
   font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; white-space: nowrap;
@@ -288,3 +354,19 @@ h1, h2, h3 { margin: 0 0 4px; }
 .portal-appt .li-body { flex: 1; min-width: 0; }
 .portal-appt b { display: block; font-size: 14px; }
 .portal-appt small { color: var(--muted); font-size: 12px; }
+
+/* ---- Public "Find care" page ---- */
+.find-wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 40px; }
+.find-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.find-head h1 { margin: 0 0 4px; font-size: 26px; color: #0f2a5c; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.chip { padding: 9px 16px; border-radius: 999px; border: 1px solid #c9d6f2; background: #fff; cursor: pointer;
+  font-size: 14px; font-weight: 600; color: #35538a; }
+.chip-on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.find-emergency { margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: #fef2f2;
+  border: 2px solid #ef4444; color: #991b1b; display: grid; gap: 4px; }
+.find-clinic { margin-bottom: 12px; }
+.find-clinic-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.find-doc { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0;
+  border-top: 1px dashed var(--border); margin-top: 8px; flex-wrap: wrap; }
+

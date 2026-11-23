@@ -119,6 +119,9 @@ namespace ClinicApp.Api.Data.Migrations
                     b.Property<decimal>("DefaultConsultationFee")
                         .HasColumnType("numeric(10,2)");
 
+                    b.Property<bool>("IsListedPublicly")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");

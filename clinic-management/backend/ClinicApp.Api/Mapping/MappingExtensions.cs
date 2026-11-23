@@ -29,7 +29,7 @@ public static class MappingExtensions
             v.Notes);
 
     public static ClinicDto ToDto(this Clinic c) =>
-        new(c.Id, c.Name, c.Address, c.Phone, c.DefaultConsultationFee, c.WorkingHours);
+        new(c.Id, c.Name, c.Address, c.Phone, c.DefaultConsultationFee, c.WorkingHours, c.IsListedPublicly);
 
     public static AppointmentDto ToDto(this Appointment a) =>
         new(

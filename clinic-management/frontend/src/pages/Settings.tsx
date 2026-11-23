@@ -19,7 +19,8 @@ export default function Settings() {
     e.preventDefault();
     if (!clinic) return;
     await updateClinic({ name: clinic.name, address: clinic.address, phone: clinic.phone,
-      defaultConsultationFee: clinic.defaultConsultationFee, workingHours: clinic.workingHours });
+      defaultConsultationFee: clinic.defaultConsultationFee, workingHours: clinic.workingHours,
+      isListedPublicly: clinic.isListedPublicly });
     setMsg('Clinic settings saved.');
     setTimeout(() => setMsg(''), 2500);
   };
@@ -59,6 +60,17 @@ export default function Settings() {
           <div className="field"><label>Working Hours</label>
             <input className="input" value={clinic.workingHours ?? ''}
               onChange={(e) => setClinic({ ...clinic, workingHours: e.target.value })} /></div>
+          <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', margin: '4px 0 14px', cursor: 'pointer' }}>
+            <input type="checkbox" checked={clinic.isListedPublicly} style={{ width: 'auto', marginTop: 3 }}
+              onChange={(e) => setClinic({ ...clinic, isListedPublicly: e.target.checked })} />
+            <span>
+              Show my clinic in the public “Find a doctor” search
+              <small className="muted" style={{ display: 'block' }}>
+                Patients can find your clinic name, address, phone, doctors and fees. No patient
+                data is ever shown.
+              </small>
+            </span>
+          </label>
           <button className="btn btn-primary">Save Clinic Settings</button>
         </form>
       )}

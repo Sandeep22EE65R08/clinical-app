@@ -186,7 +186,25 @@ export interface Clinic {
   phone?: string | null;
   defaultConsultationFee: number;
   workingHours?: string | null;
+  isListedPublicly: boolean;
 }
+
+// ---- Public "Find care" discovery ----
+export interface Symptom { id: string; label: string; labelHi: string; department: string; }
+export interface Triage {
+  isEmergency: boolean;
+  emergencyMessage?: string | null;
+  departments: { department: string; keyword: string }[];
+  disclaimer: string;
+}
+export interface DiscoverDoctor {
+  id: string; name: string; specialization?: string | null; consultationFee?: number | null;
+}
+export interface DiscoverClinic {
+  id: string; name: string; address: string; phone?: string | null;
+  workingHours?: string | null; defaultConsultationFee: number; doctors: DiscoverDoctor[];
+}
+export interface DiscoverResult { triage: Triage; clinics: DiscoverClinic[]; }
 
 export type ExpenseCategory =
   'StaffSalary' | 'Rent' | 'Electricity' | 'MedicalSupplies'

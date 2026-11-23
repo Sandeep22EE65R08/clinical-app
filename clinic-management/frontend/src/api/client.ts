@@ -2,9 +2,18 @@ import axios from 'axios';
 
 const TOKEN_KEY = 'clinic_token';
 
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
-export const setToken = (t: string) => localStorage.setItem(TOKEN_KEY, t);
-export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
+// "Remember me" ticked -> localStorage (stays signed in); unticked -> sessionStorage
+// (signed out when the browser/tab is closed).
+export const getToken = () => sessionStorage.getItem(TOKEN_KEY) ?? localStorage.getItem(TOKEN_KEY);
+export const setToken = (t: string, remember = true) => {
+  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, t);
+};
+export const clearToken = () => {
+  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+};
 
 export const api = axios.create({ baseURL: '/api' });
 

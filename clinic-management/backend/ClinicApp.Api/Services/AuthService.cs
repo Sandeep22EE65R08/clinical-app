@@ -54,7 +54,9 @@ public class AuthService : IAuthService
         {
             Name = request.ClinicName.Trim(),
             Address = request.Address.Trim(),
-            Phone = request.Phone
+            Phone = request.Phone,
+            // Demo clinics (with fake doctors) must not show up in public search.
+            IsListedPublicly = !request.IncludeSampleData
         };
         await _clinics.AddAsync(clinic);
 

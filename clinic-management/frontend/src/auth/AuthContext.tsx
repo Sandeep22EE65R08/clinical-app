@@ -10,7 +10,7 @@ import type { PatientRegisterBody, RegisterClinicBody } from '../api/endpoints';
 
 interface AuthState {
   user: AuthResponse | null;
-  login: (username: string, password: string) => Promise<AuthResponse>;
+  login: (username: string, password: string, remember?: boolean) => Promise<AuthResponse>;
   register: (body: RegisterClinicBody) => Promise<AuthResponse>;
   patientLogin: (mobileNumber: string, password: string) => Promise<AuthResponse>;
   patientRegister: (body: PatientRegisterBody) => Promise<AuthResponse>;
@@ -25,14 +25,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthResponse | null>(null);
 
   useEffect(() => {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = sessionStorage.getItem(USER_KEY) ?? localStorage.getItem(USER_KEY);
     if (raw) setUser(JSON.parse(raw));
   }, []);
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, remember = true) => {
     const res = await loginApi(username, password);
-    setToken(res.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(res));
+    setToken(res.token, remember);
+    localStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(USER_KEY);
+    (remember ? localStorage : sessionStorage).setItem(USER_KEY, JSON.stringify(res));
     setUser(res);
     return res;
   };
@@ -64,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     clearToken();
     localStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(USER_KEY);
     setUser(null);
   };
 

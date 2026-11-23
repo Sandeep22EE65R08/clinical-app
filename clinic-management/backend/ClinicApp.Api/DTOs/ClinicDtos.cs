@@ -8,11 +8,13 @@ public record ClinicDto(
     string Address,
     string? Phone,
     decimal DefaultConsultationFee,
-    string? WorkingHours);
+    string? WorkingHours,
+    bool IsListedPublicly);
 
 public record UpdateClinicRequest(
     [Required] string Name,
     [Required] string Address,
     string? Phone,
     decimal DefaultConsultationFee,
-    string? WorkingHours);
+    string? WorkingHours,
+    bool IsListedPublicly = true);

@@ -27,6 +27,7 @@ import Settings from './pages/Settings';
 import Receipt from './pages/Receipt';
 import Expenses from './pages/Expenses';
 import Staff from './pages/Staff';
+import FindCare from './pages/FindCare';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/find" element={<FindCare />} />
           <Route path="/portal/login" element={<PatientLogin />} />
           <Route path="/portal/register" element={<PatientRegister />} />
           <Route path="/portal" element={

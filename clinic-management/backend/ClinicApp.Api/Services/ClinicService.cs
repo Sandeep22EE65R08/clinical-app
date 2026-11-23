@@ -33,6 +33,7 @@ public class ClinicService : IClinicService
         clinic.Phone = r.Phone;
         clinic.DefaultConsultationFee = r.DefaultConsultationFee;
         clinic.WorkingHours = r.WorkingHours;
+        clinic.IsListedPublicly = r.IsListedPublicly;
         _clinics.Update(clinic);
         await _clinics.SaveChangesAsync();
         return clinic.ToDto();

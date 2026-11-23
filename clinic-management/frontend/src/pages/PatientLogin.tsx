@@ -54,6 +54,9 @@ export default function PatientLogin() {
         <p className="muted" style={{ textAlign: 'center', marginTop: 4, fontSize: 14 }}>
           Clinic staff? <Link to="/login">Staff login</Link>
         </p>
+        <p className="muted" style={{ textAlign: 'center', marginTop: 4, fontSize: 14 }}>
+          Need a doctor? <Link to="/find">Find clinics near you</Link>
+        </p>
       </div>
     </div>
   );
