@@ -1,7 +1,7 @@
 import { api } from './client';
 import type {
   Analytics, Appointment, AppointmentStatus, AuthResponse, Clinic, DailyReport,
-  Dashboard, DiscoverResult, DoctorStat, Expense, ExpenseSummary, NotificationsResponse, Patient,
+  Dashboard, Department, DepartmentReportRow, DiscoverResult, DoctorProfile, DoctorStat, Facility, Expense, ExpenseSummary, NotificationsResponse, Patient,
   PatientHistory, PortalDoctor, PortalProfile, PortalVisit, PublicClinic,
   QueueState, Symptom, UserDto, Visit,
 } from '../types';
@@ -96,6 +96,23 @@ export const createExpense = (body: Record<string, unknown>) =>
   api.post<Expense>('/expenses', body).then((r) => r.data);
 export const deleteExpense = (id: string) =>
   api.delete(`/expenses/${id}`).then((r) => r.data);
+
+// Hospital structure (Admin only)
+export const getFacilities = () => api.get<Facility[]>('/hospital/facilities').then((r) => r.data);
+export const createFacility = (body: Record<string, unknown>) =>
+  api.post<Facility>('/hospital/facilities', body).then((r) => r.data);
+export const deleteFacility = (id: string) => api.delete(`/hospital/facilities/${id}`);
+export const getDepartments = () => api.get<Department[]>('/hospital/departments').then((r) => r.data);
+export const createDepartment = (body: Record<string, unknown>) =>
+  api.post<Department>('/hospital/departments', body).then((r) => r.data);
+export const deleteDepartment = (id: string) => api.delete(`/hospital/departments/${id}`);
+export const assignDoctors = (id: string, doctorIds: string[]) =>
+  api.put<Department>(`/hospital/departments/${id}/doctors`, { doctorIds }).then((r) => r.data);
+export const getDoctorProfiles = () => api.get<DoctorProfile[]>('/hospital/doctors').then((r) => r.data);
+export const saveDoctorProfile = (userId: string, body: Record<string, unknown>) =>
+  api.put<DoctorProfile>(`/hospital/doctors/${userId}/profile`, body).then((r) => r.data);
+export const getDepartmentReport = (params: { from?: string; to?: string }) =>
+  api.get<DepartmentReportRow[]>('/hospital/department-report', { params }).then((r) => r.data);
 
 // ---- Public "Find care" (no login) ----
 export const getSymptoms = () => api.get<Symptom[]>('/discover/symptoms').then((r) => r.data);

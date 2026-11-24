@@ -140,6 +140,100 @@ namespace ClinicApp.Api.Data.Migrations
                     b.ToTable("Clinics");
                 });
 
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClinicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("FacilityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacilityId");
+
+                    b.HasIndex("ClinicId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.DoctorDepartment", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "DepartmentId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("DoctorDepartments");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.DoctorProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CouncilName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CouncilRegistrationNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Qualifications")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorProfiles");
+                });
+
             modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Expense", b =>
                 {
                     b.Property<Guid>("Id")
@@ -175,6 +269,39 @@ namespace ClinicApp.Api.Data.Migrations
                     b.HasIndex("ClinicId", "ExpenseDate");
 
                     b.ToTable("Expenses");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Facility", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ClinicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClinicId");
+
+                    b.ToTable("Facilities");
                 });
 
             modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Patient", b =>
@@ -356,7 +483,66 @@ namespace ClinicApp.Api.Data.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Department", b =>
+                {
+                    b.HasOne("ClinicApp.Api.Domain.Entities.Clinic", "Clinic")
+                        .WithMany()
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClinicApp.Api.Domain.Entities.Facility", "Facility")
+                        .WithMany()
+                        .HasForeignKey("FacilityId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Facility");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.DoctorDepartment", b =>
+                {
+                    b.HasOne("ClinicApp.Api.Domain.Entities.Department", "Department")
+                        .WithMany("Doctors")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClinicApp.Api.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.DoctorProfile", b =>
+                {
+                    b.HasOne("ClinicApp.Api.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Expense", b =>
+                {
+                    b.HasOne("ClinicApp.Api.Domain.Entities.Clinic", "Clinic")
+                        .WithMany()
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Facility", b =>
                 {
                     b.HasOne("ClinicApp.Api.Domain.Entities.Clinic", "Clinic")
                         .WithMany()
@@ -413,6 +599,11 @@ namespace ClinicApp.Api.Data.Migrations
                     b.Navigation("Patients");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Doctors");
                 });
 
             modelBuilder.Entity("ClinicApp.Api.Domain.Entities.Patient", b =>

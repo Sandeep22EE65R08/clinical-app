@@ -189,6 +189,23 @@ export interface Clinic {
   isListedPublicly: boolean;
 }
 
+// ---- Hospital structure ----
+export interface Facility { id: string; name: string; address: string; phone?: string | null; }
+export interface Department {
+  id: string; name: string; description?: string | null; facilityId?: string | null;
+  isActive: boolean; doctorCount: number; doctorIds: string[];
+}
+export interface DoctorProfile {
+  userId: string; name: string; specialization?: string | null; consultationFee?: number | null;
+  qualifications?: string | null; councilRegistrationNumber?: string | null; councilName?: string | null;
+  experienceYears: number; bio?: string | null;
+  verificationStatus: 'Pending' | 'Verified' | 'Rejected'; departmentIds: string[];
+}
+export interface DepartmentReportRow {
+  departmentId?: string | null; department: string; doctors: number;
+  visits: number; collection: number; pending: number;
+}
+
 // ---- Public "Find care" discovery ----
 export interface Symptom { id: string; label: string; labelHi: string; department: string; }
 export interface Triage {

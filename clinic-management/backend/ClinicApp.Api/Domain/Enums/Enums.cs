@@ -60,6 +60,13 @@ public enum VisitStatus
     Skipped = 3
 }
 
+public enum DoctorVerificationStatus
+{
+    Pending = 0,
+    Verified = 1,
+    Rejected = 2
+}
+
 public enum ExpenseCategory
 {
     StaffSalary = 0,

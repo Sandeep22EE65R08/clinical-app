@@ -28,6 +28,7 @@ import Receipt from './pages/Receipt';
 import Expenses from './pages/Expenses';
 import Staff from './pages/Staff';
 import FindCare from './pages/FindCare';
+import Departments from './pages/Departments';
 
 export default function App() {
   return (
@@ -63,6 +64,8 @@ export default function App() {
               <ProtectedRoute roles={['Admin', 'Doctor']}><Analytics /></ProtectedRoute>} />
             <Route path="expenses" element={
               <ProtectedRoute roles={['Admin']}><Expenses /></ProtectedRoute>} />
+            <Route path="departments" element={
+              <ProtectedRoute roles={['Admin']}><Departments /></ProtectedRoute>} />
             <Route path="staff" element={
               <ProtectedRoute roles={['Admin']}><Staff /></ProtectedRoute>} />
             <Route path="settings" element={

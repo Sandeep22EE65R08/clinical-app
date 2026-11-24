@@ -14,6 +14,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Expense> Expenses => Set<Expense>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Facility> Facilities => Set<Facility>();
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<DoctorProfile> DoctorProfiles => Set<DoctorProfile>();
+    public DbSet<DoctorDepartment> DoctorDepartments => Set<DoctorDepartment>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -54,6 +58,25 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.Doctor).WithMany().HasForeignKey(x => x.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        b.Entity<Facility>(e => e.HasIndex(x => x.ClinicId));
+
+        b.Entity<Department>(e =>
+        {
+            e.HasIndex(x => new { x.ClinicId, x.Name }).IsUnique();
+            e.HasOne(x => x.Facility).WithMany().HasForeignKey(x => x.FacilityId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        b.Entity<DoctorProfile>(e => e.HasIndex(x => x.UserId).IsUnique());
+
+        b.Entity<DoctorDepartment>(e =>
+        {
+            e.HasKey(x => new { x.UserId, x.DepartmentId });
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Department).WithMany(d => d.Doctors).HasForeignKey(x => x.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<Expense>(e =>

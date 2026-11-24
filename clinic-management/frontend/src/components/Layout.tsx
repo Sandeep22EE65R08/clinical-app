@@ -17,6 +17,7 @@ const NAV: Item[] = [
   { to: '/notifications', label: 'Notifications', icon: '🔔' },
   { to: '/analytics', label: 'Analytics', icon: '📊', roles: ['Admin', 'Doctor'] },
   { to: '/expenses', label: 'Expenses', icon: '🧾', roles: ['Admin'] },
+  { to: '/departments', label: 'Departments', icon: '🏥', roles: ['Admin'] },
   { to: '/staff', label: 'Staff', icon: '🧑‍⚕️', roles: ['Admin'] },
   { to: '/settings', label: 'Settings', icon: '⚙️', roles: ['Admin'] },
 ];
